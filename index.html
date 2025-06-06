@@ -4,48 +4,95 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
-/* —— أساسيات —— */
-*{box-sizing:border-box;margin:0}
-body{font-family:"Cairo",sans-serif;background:#eef2f5;color:#222}
+/* ========== لوحــة الثيـم ========== */
+:root[data-theme="light"]{
+  --bg           : #fafafa;     /* خلفية شبه بيضاء */
+  --text         : #222;
+  --card-bg      : #ffffff;
+  --card-border  : #e0e0e0;
 
+  /* اللون البراندي الذهبي */
+  --primary      : #ae8912;
+  --primary-hov  : #ae8912;
+
+  --secondary    : #6c757d;
+  --secondary-hov: #7a8289;
+
+  --topbar-bg    : #ae8912;
+
+  --option-sel   : #000;
+
+  /* ألوان التصحيح */
+  --correct-bg   : #d1e7dd; --correct-bd:#198754;
+  --wrong-bg     : #f8d7da; --wrong-bd :#dc3545;
+}
+
+:root[data-theme="dark"]{
+  --bg           : #141414;     /* غامق جداً */
+  --text         : #f1f1f1;
+  --card-bg      : #1f1f1f;
+  --card-border  : #353535;
+
+  --primary      : #ae8912;
+  --primary-hov  : #ae8912;
+
+  --secondary    : #495057;
+  --secondary-hov: #5a6268;
+
+  --topbar-bg    : #ae8912;
+
+  --option-sel   : #fff;
+
+  --correct-bg   : #113d2d; --correct-bd:#2aa15f;
+  --wrong-bg     : #5b2028; --wrong-bd :#dc3545;
+}
+
+/* —— أساسيات —— */
+*{box-sizing:border-box;margin:0;scroll-behavior:smooth}
+body{font-family:'Times New Roman', Times, serif
+,sans-serif;background:var(--bg);color:var(--text)}
 /* شريط علوي */
-.topbar{background:#1e88e5;color:#fff;padding:.9rem 1.2rem;display:flex;align-items:center;gap:10px}
+.topbar{background:var(--topbar-bg);color:#fff;padding:.9rem 1.2rem;display:flex;align-items:center;gap:10px}
 .topbar h1{font-size:1.2rem;margin:0 auto 0 0}
-.back{font-size:1.5rem;cursor:pointer;opacity:.9}
-.back:hover{opacity:1}
+.back-btn{background:#ffffff26;border:none;color:#fff;padding:.2rem 1rem;border-radius:8px;cursor:pointer;font-size:.95rem}
+.back-btn:hover{background:#ffffff40}
+.theme-toggle{background:#ffffff26;border:none;color:#fff;border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center}
+.theme-toggle:hover{background:#ffffff40}
 
 /* محتوى مركزي */
 .container{max-width:700px;margin:auto;padding:24px}
 
 /* زر عام */
 .btn{display:block;width:90%;max-width:520px;margin:12px auto;padding:.9rem;border:none;border-radius:12px;font-size:1.05rem;cursor:pointer;transition:.15s;box-shadow:0 2px 5px rgba(0,0,0,.1)}
-.btn-main{background:#2ecc71;color:#fff}
-.btn-main:hover{filter:brightness(1.07)}
-.btn-sec{background:#6c757d;color:#fff}
-.btn-sec:hover{filter:brightness(1.12)}
+.btn-main{background:var(--primary);color:#fff}
+.btn-main:hover{background:var(--primary-hov)}
+.btn-sec{background:var(--secondary);color:#fff}
+.btn-sec:hover{background:var(--secondary-hov)}
 .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
 
 /* بطاقات الأسئلة */
-.card{background:#fff;border-radius:12px;margin-top:20px;padding:1.3rem 1.4rem;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.card{background:var(--card-bg);border-radius:12px;margin-top:20px;padding:1.3rem 1.4rem;box-shadow:0 2px 6px rgba(0,0,0,.08);direction:ltr;text-align:left;border:1.5px solid var(--card-border)}
 .card h4{margin-bottom:.8rem;font-size:1.05rem}
 
 /* خيار */
-.option{display:flex;align-items:center;border:2px solid #ced4da;border-radius:10px;padding:.55rem .85rem;margin:.5rem 0;cursor:pointer;transition:.15s;font-size:.97rem}
-.option input{margin-left:.6rem;cursor:pointer}
-.option.selected{border-color:#000}
-.option.correct {border-color:#198754;background:#d1e7dd}
-.option.wrong   {border-color:#dc3545;background:#f8d7da}
+.option{display:flex;align-items:center;border:2px solid var(--card-border);border-radius:10px;padding:.55rem .85rem;margin:.5rem 0;cursor:pointer;transition:.15s;font-size:.97rem}
+.option input{margin-right:.6rem;cursor:pointer}
+.option.selected{border-color:var(--option-sel)}
+.option.correct{border-color:var(--correct-bd);background:var(--correct-bg)}
+.option.wrong  {border-color:var(--wrong-bd);background:var(--wrong-bg)}
 
 /* صندوق نتيجة */
 .result-box{max-width:520px;margin:0 auto 1.5rem;padding:1.2rem;border-radius:12px;text-align:center;font-size:1.1rem;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.08)}
-.pass{background:#d1e7dd;color:#0f5132}
-.fail{background:#f8d7da;color:#842029}
+.pass{background:var(--correct-bg);color:var(--correct-bd)}
+.fail{background:var(--wrong-bg);color:var(--wrong-bd)}
 </style>
 
 <body>
+<!-- شريط أعلى -->
 <div class="topbar">
-  <span id="backBtn" class="back" style="display:none" onclick="renderHome()">⟵</span>
+  <button id="backBtn" class="back-btn" style="display:none" onclick="renderHome()">رجوع</button>
   <h1 id="barTitle">منصة الاختبارات</h1>
+  <button id="themeBtn" class="theme-toggle" onclick="toggleTheme()">🌙</button>
 </div>
 
 <div id="app" class="container"></div>
@@ -61,41 +108,57 @@ const COURSES={
           src:"https://raw.githubusercontent.com/AboALhasanx/json-files/refs/heads/main/iot_quiz.json"}
 };
 
-const tg = window.Telegram?.WebApp; if(tg) tg.expand();
-const app     = document.getElementById("app");
-const barTitle= document.getElementById("barTitle");
-const backBtn = document.getElementById("backBtn");
+const tg = window.Telegram?.WebApp;
+const app      = document.getElementById("app");
+const barTitle = document.getElementById("barTitle");
+const backBtn  = document.getElementById("backBtn");
+const themeBtn = document.getElementById("themeBtn");
 
-let quizData=[],answers=[],reviewed=false;
+/* ============ ثيم ============ */
+function applyTheme(th){
+   document.documentElement.setAttribute('data-theme',th);
+   themeBtn.textContent = th==='dark'?'🌞':'🌙';
+}
+function initTheme(){
+   let th=localStorage.theme;
+   if(!th){
+      th = (tg && tg.themeParams?.bg_color === '#000000') ? 'dark' : 'light';
+   }
+   applyTheme(th);
+}
+function toggleTheme(){
+   const cur=document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light';
+   const next=cur==='dark'?'light':'dark';
+   localStorage.theme=next;
+   applyTheme(next);
+}
+initTheme();
+
+/* ============ منطق الاختبارات ============ */
+let quizData=[],answers=[];
 
 /* شاشة البداية */
 function renderHome(){
   backBtn.style.display="none";
   barTitle.textContent="منصة الاختبارات";
   app.innerHTML=`<h2 class="fw-bold mb-4" style="text-align:center">اختر الاختبار</h2>`+
-    Object.entries(COURSES).map(([k,v])=>
-      `<button class="btn btn-main" onclick="startQuiz('${k}')">${v.title}</button>`
-    ).join("");
+    Object.entries(COURSES).map(([k,v])=>`<button class="btn btn-main" onclick="startQuiz('${k}')">${v.title}</button>`).join("");
 }
 
 function startQuiz(key){
   const {title,src}=COURSES[key];
-  backBtn.style.display="block";
+  backBtn.style.display="inline-block";
   barTitle.textContent=title;
-  reviewed=false;
-  app.innerHTML=`<div id="quiz"></div>
-                 <button id="submit" class="btn btn-main mt-3" disabled>إظهار النتيجة</button>`;
-  fetch(src).then(r=>r.json()).then(data=>{quizData=data;renderQuestions();});
+  app.innerHTML=`<div id="quiz"></div><button id="submit" class="btn btn-main mt-3" disabled>إظهار النتيجة</button>`;
+  fetch(src).then(r=>r.json()).then(d=>{quizData=d;renderQuestions();});
 }
 
 function renderQuestions(){
-  const box=document.getElementById("quiz");
-  box.innerHTML="";
+  const box=document.getElementById("quiz"); box.innerHTML="";
   quizData.forEach((q,i)=>{
     const card=document.createElement("div");
     card.className="card";
-    card.innerHTML=`<h4>${i+1}. ${q.question}</h4>`+
-      q.options.map((opt,idx)=>`
+    card.innerHTML=`<h4>${i+1}. ${q.question}</h4>`+q.options.map((opt,idx)=>`
         <label class="option" id="lbl-${i}-${idx}">
           <input type="radio" name="q${i}" value="${idx}"> ${opt}
         </label>`).join("");
@@ -105,66 +168,58 @@ function renderQuestions(){
 
 /* متابعة التحديد */
 document.addEventListener("change",e=>{
-  if(e.target.type!=="radio")return;
-  const name=e.target.name;                 // مثل q0
-  document.querySelectorAll(`input[name="${name}"]`).forEach(inp=>{
-      document.getElementById(`lbl-${name.slice(1)}-${inp.value}`)
-              .classList.toggle("selected",inp.checked);
-  });
-  answers=quizData.map((_,i)=>{
-     const sel=document.querySelector(`input[name=q${i}]:checked`);
-     return sel?Number(sel.value):null;
-  });
-  document.getElementById("submit").disabled = answers.includes(null);
+ if(e.target.type!=="radio")return;
+ const name=e.target.name;
+ document.querySelectorAll(`input[name="${name}"]`).forEach(inp=>{
+   document.getElementById(`lbl-${name.slice(1)}-${inp.value}`).classList.toggle("selected",inp.checked);
+ });
+ const check=quizData.map((_,i)=>{const sel=document.querySelector(`input[name=q${i}]:checked`);return sel?Number(sel.value):null;});
+ document.getElementById("submit").disabled = check.includes(null);
 });
 
-/* زر النتيجة/التصحيح */
+/* أزرار النتيجة والتصحيح */
 document.addEventListener("click",e=>{
-  if(e.target.id!=="submit")return;
-  if(!reviewed){
-      showScore();
-      e.target.textContent="🔍 عرض التصحيح";
-      reviewed=true;
-      return;
-  }
-  showReview();
-  e.target.remove();
+ const id=e.target.id;
+ if(id==="submit"){showScore();e.target.remove();addReviewButton();}
+ else if(id==="reviewBtn"){showReview();e.target.remove();}
 });
 
 function showScore(){
-  const score=answers.reduce((s,a,i)=> a===quizData[i].correct_option_id? s+1 : s ,0);
-  const pass = score >= Math.ceil(quizData.length/2);
-  const box  = document.createElement("div");
-  box.className=`result-box ${pass?'pass':'fail'}`;
-  box.innerHTML = pass
-     ? `مبروك! درجتك <span>${score}</span> من <span>${quizData.length}</span>`
-     : `حظًا أوفر! درجتك <span>${score}</span> من <span>${quizData.length}</span>`;
-  app.prepend(box);
-  addFooterButtons();
-  window.scrollTo({top:0,behavior:"smooth"});
+ answers=quizData.map((_,i)=>Number(document.querySelector(`input[name=q${i}]:checked`).value));
+ const score=answers.reduce((s,a,i)=> a===quizData[i].correct_option_id? s+1 : s ,0);
+ const pass = score >= Math.ceil(quizData.length/2);
+ const box  = document.createElement("div");
+ box.className=`result-box ${pass?'pass':'fail'}`;
+ box.innerHTML=pass?`مبروك! درجتك <span>${score}</span> من <span>${quizData.length}</span>`
+                  :`حظًا أوفر! درجتك <span>${score}</span> من <span>${quizData.length}</span>`;
+ app.prepend(box);
+ addFooterButtons();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function addReviewButton(){
+ app.insertAdjacentHTML("afterbegin",`<button id="reviewBtn" class="btn btn-sec mt-2">🔍 عرض التصحيح</button>`);
 }
 
 function showReview(){
-  quizData.forEach((q,i)=>{
-     const cor=q.correct_option_id;
-     document.getElementById(`lbl-${i}-${cor}`).classList.add("correct");
-     const user=answers[i];
-     if(user!==cor && user!==null){
-       document.getElementById(`lbl-${i}-${user}`).classList.add("wrong");
-     }
-  });
-  addFooterButtons();            // للتأكّد أنها موجودة
-  window.scrollTo({top:0,behavior:"smooth"});
+ quizData.forEach((q,i)=>{
+   const cor=q.correct_option_id;
+   document.getElementById(`lbl-${i}-${cor}`).classList.add("correct");
+   const user=answers[i];
+   if(user!==cor){document.getElementById(`lbl-${i}-${user}`).classList.add("wrong");}
+ });
+ addFooterButtons();
+ window.scrollTo({top:0,behavior:"smooth"});
 }
 
-/* أزرار رجوع/إغلاق – تُضاف مرة واحدة */
+/* أسفل الصفحة */
 function addFooterButtons(){
-  if(document.getElementById("footerBtns")) return;
-  app.insertAdjacentHTML("beforeend",`
-    <div id="footerBtns" class="text-center mt-4">
-       <button class="btn btn-main mb-2" onclick="renderHome()">العودة للاختبارات</button>
-       <button class="btn btn-sec"  onclick="tg?tg.close():window.close()">إغلاق النافذة</button>
-    </div>`);
+ if(document.getElementById("footerBtns"))return;
+ app.insertAdjacentHTML("beforeend",`
+   <div id="footerBtns" class="text-center mt-4">
+     <button class="btn btn-main mb-2" onclick="renderHome()">العودة للاختبارات</button>
+     <button class="btn btn-sec"  onclick="tg?tg.close():window.close()">إغلاق النافذة</button>
+   </div>`);
 }
 
 /* تشغيل */
