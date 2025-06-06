@@ -5,6 +5,17 @@
 
 <style>
 /* ===== لوحة الثيم (رمادي بالكامل) ===== */
+/* ❶ ألغِ إطار الـ focus لجميع العناصر */
+*:focus{
+  outline:none !important;      /* يزيل الخط الأزرق */
+  box-shadow:none !important;   /* يزيل ظلّ التركيز لبعض العناصر */
+}
+
+/* ❷ ألغِ الوميض الأزرق على أجهزة Android/WebKit */
+button, a, input, label, .course-card, .option{
+  -webkit-tap-highlight-color:transparent;   /* يُعطِّل التمييز عند اللمس */
+}
+
 :root[data-theme="light"]{
   --bg:#f4f4f4;     --text:#212121;
   --card-bg:#ffffff;--card-border:#d7d7d7;
