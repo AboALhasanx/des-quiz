@@ -1,0 +1,64 @@
+<!-- des-quiz/index.html -->
+<!doctype html>
+<html lang="ar" dir="rtl">
+<meta charset="utf-8">
+<title>DES Quiz</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+ body{font-family:sans-serif;background:#222;color:#eee;margin:0;padding:0 8px}
+ h2{margin:12px 0} button{margin-top:12px;padding:8px 14px;font-size:16px}
+ .question{margin:18px 0;padding:12px;border:1px solid #555;border-radius:6px}
+ label{display:block;margin:6px 0;cursor:pointer}
+ input{margin-left:6px}
+ #submit{background:#27ae60;color:#fff;border:none;border-radius:4px}
+</style>
+
+<body>
+<h2>اختبار DES</h2>
+<div id="quiz"></div>
+<button id="submit" disabled>إرسال الإجابات</button>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+let answers = [];
+let quizData = [];
+
+fetch("https://raw.githubusercontent.com/AboALhasanx/json-files/refs/heads/main/dess_quiz.json")
+  .then(r => r.json())
+  .then(data => {
+     quizData = data;
+     const container = document.getElementById('quiz');
+
+     data.forEach((q,i)=>{
+        const div=document.createElement('div');
+        div.className="question";
+        div.innerHTML=`<strong>${i+1}. ${q.question}</strong>`;
+        q.options.forEach((opt,idx)=>{
+           const id=`q${i}_${idx}`;
+           div.innerHTML+=`
+             <label><input type="radio" name="q${i}" value="${idx}" id="${id}">
+             ${opt}</label>`;
+        });
+        container.appendChild(div);
+     });
+  });
+
+document.addEventListener('change',()=>{
+  const total = quizData.length;
+  answers = [];
+  for(let i=0;i<total;i++){
+     const sel = document.querySelector(`input[name=q${i}]:checked`);
+     answers.push(sel ? Number(sel.value) : null);
+  }
+  document.getElementById('submit').disabled = answers.includes(null);
+});
+
+document.getElementById('submit').onclick = ()=>{
+  tg.sendData(JSON.stringify({quiz:"des", answers}));
+  tg.close();
+};
+</script>
+</body>
