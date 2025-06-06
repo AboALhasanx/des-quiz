@@ -1,60 +1,57 @@
 <!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8">
 <title>كوزات واختبارات MCQ</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
-<!-- ❶ لا نستخدم integrity – فقط ملف JS يُحمّل الأيقونات -->
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
-/* ===== لوحة الثيم الرمادي ===== */
+/* ===== لوحة الثيم (رمادي بالكامل) ===== */
 :root[data-theme="light"]{
-  --bg:#f4f4f4;        --text:#212121;
-  --card-bg:#ffffff;   --card-border:#d7d7d7;
+  --bg:#f4f4f4;     --text:#212121;
+  --card-bg:#ffffff;--card-border:#d7d7d7;
 
-  --primary:#505050;   --primary-hov:#3e3e3e;
-  --secondary:#7e7e7e; --secondary-hov:#6d6d6d;
-  --topbar-bg:#3c3c3c;
+  --primary:#505050;      /* زرّ رئيسي رمادي داكن */
+  --primary-hov:#3e3e3e;
 
-  --grad-from:#e7e7e7; --grad-to:#cacaca;
+  --secondary:#7e7e7e;    --secondary-hov:#6d6d6d;
+  --topbar-bg:#3c3c3c;    /* شريط علوي رمادي غامق */
+
+  --grad-from:#e7e7e7;    --grad-to:#cacaca;  /* خلفية الصفحة الأولى */
   --option-sel:#000;
 
+  /* التصحيح يبقى ملوّن */
   --correct-bg:#d1e7dd; --correct-bd:#198754;
-  --wrong-bg:#f8d7da;   --wrong-bd:#dc3545;
+  --wrong-bg  :#f8d7da; --wrong-bd :#dc3545;
 }
 :root[data-theme="dark"]{
-  --bg:#141414;        --text:#eeeeee;
-  --card-bg:#1f1f1f;   --card-border:#404040;
+  --bg:#141414;     --text:#eeeeee;
+  --card-bg:#1f1f1f;--card-border:#404040;
 
-  --primary:#707070;   --primary-hov:#808080;
-  --secondary:#535353; --secondary-hov:#636363;
+  --primary:#707070; --primary-hov:#808080;
+  --secondary:#535353;--secondary-hov:#636363;
   --topbar-bg:#2a2a2a;
 
   --grad-from:#2b2b2b; --grad-to:#494949;
+
   --option-sel:#fff;
 
   --correct-bg:#113d2d; --correct-bd:#2aa15f;
-  --wrong-bg:#5b2028;   --wrong-bd:#dc3545;
+  --wrong-bg:#5b2028;  --wrong-bd:#dc3545;
 }
 
 /* — أساسيات — */
 *{box-sizing:border-box;margin:0;scroll-behavior:smooth}
 body{font-family:'Times New Roman', Times, serif,
 sans-serif;background:var(--bg);color:var(--text)}
-i{pointer-events:none}           /* الأيقونات لا تلتقط النقر */
 
 /* شريط علوي ثابت */
 .topbar{background:var(--topbar-bg);color:#fff;padding:.9rem 1.2rem;
        display:flex;align-items:center;gap:10px;
        position:sticky;top:0;z-index:1000}
 .topbar h1{font-size:1.2rem;margin:0 auto 0 0}
-.btn-icon{display:inline-flex;align-items:center;gap:.35rem}
-
-.back-btn,.theme-toggle{
-  background:#ffffff26;border:none;color:#fff;border-radius:8px;
-  cursor:pointer;font-size:1rem;padding:.45rem .9rem;transition:.15s}
-.back-btn:hover,.theme-toggle:hover{background:#ffffff3d}
-.theme-toggle{width:36px;height:36px;border-radius:50%;padding:0}
+.back-btn{background:#ffffff26;border:none;color:#fff;padding:.25rem 1.1rem;border-radius:8px;cursor:pointer;font-size:.95rem}
+.back-btn:hover{background:#ffffff3d}
+.theme-toggle{background:#ffffff26;border:none;color:#fff;border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center}
+.theme-toggle:hover{background:#ffffff3d}
 
 /* شاشة البداية */
 .hero{min-height:calc(100vh - 52px);padding:32px;
@@ -66,18 +63,18 @@ i{pointer-events:none}           /* الأيقونات لا تلتقط النق�
              display:flex;gap:28px;align-items:center;cursor:pointer;
              box-shadow:0 8px 20px rgba(0,0,0,.15);transition:.25s}
 .course-card:hover{transform:translateY(-6px);box-shadow:0 12px 28px rgba(0,0,0,.25)}
-.card-thumb{flex:0 0 120px;height:120px;border-radius:16px;background-size:cover;background-position:center;position:relative}
-.card-thumb i{font-size:2.5rem;color:#ffffffcc;position:absolute;inset:0;margin:auto}
+.card-thumb{flex:0 0 120px;height:120px;border-radius:16px;background-size:cover;background-position:center}
 .card-body{flex:1}
 .card-body h3{margin-bottom:6px;font-size:1.15rem;font-weight:700}
 .card-body p{font-size:.9rem;opacity:.8;margin:0}
 
-/* أزرار */
+/* زرّ عام */
 .btn{display:block;width:90%;max-width:520px;margin:12px auto;padding:.9rem;border:none;border-radius:12px;font-size:1.05rem;cursor:pointer;transition:.15s;box-shadow:0 2px 5px rgba(0,0,0,.1)}
-.btn-main{background:var(--primary);color:#fff}.btn-main:hover{background:var(--primary-hov)}
-.btn-sec {background:var(--secondary);color:#fff}.btn-sec:hover {background:var(--secondary-hov)}
+.btn-main{background:var(--primary);color:#fff}
+.btn-main:hover{background:var(--primary-hov)}
+.btn-sec{background:var(--secondary);color:#fff}
+.btn-sec:hover{background:var(--secondary-hov)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
-.btn i{margin-inline-start:.45rem;font-size:.9rem}
 
 /* بطاقات الأسئلة */
 .card{background:var(--card-bg);border-radius:12px;padding:1.3rem 1.4rem;margin-top:20px;
@@ -96,67 +93,56 @@ i{pointer-events:none}           /* الأيقونات لا تلتقط النق�
 </style>
 
 <body>
-<!-- شريط علوي -->
 <div class="topbar">
-  <button id="backBtn" class="back-btn btn-icon" style="display:none" onclick="renderHome()">
-    <i class="fa-solid fa-arrow-left"></i><span>رجوع</span>
-  </button>
+  <button id="backBtn" class="back-btn" style="display:none" onclick="renderHome()">رجوع</button>
   <h1 id="barTitle">كوزات واختبارات MCQ</h1>
-  <button id="themeBtn" class="theme-toggle" onclick="toggleTheme()">
-    <i id="themeIcon" class="fa-regular fa-moon"></i>
-  </button>
+  <button id="themeBtn" class="theme-toggle" onclick="toggleTheme()">🌙</button>
 </div>
 
 <div id="app"></div>
 
 <script>
-/* بيانات المواد + أيقونات */
+/* بيانات المواد */
 const COURSES={
-  des:{title:"اختبار تصميم وتحليل الأنظمة",desc:"",
-       img:"https://i.ibb.co/tMJfzZPP/1744451978496.png",icon:"fa-sitemap",
+  des:{title:"اختبار تصميم وتحليل الأنظمة",desc:" ",
+       img:"https://i.ibb.co/tMJfzZPP/1744451978496.png",
        src:"https://raw.githubusercontent.com/AboALhasanx/json-files/refs/heads/main/dess_quiz.json"},
-  mobile:{title:"اختبار تطبيقات الموبايل",desc:"",
-       img:"https://c0.wallpaperflare.com/preview/260/841/181/concept-development-device-flat.jpg",icon:"fa-mobile-screen-button",
+  mobile:{title:"اختبار تطبيقات الموبايل",desc:" ",
+       img:"https://c0.wallpaperflare.com/preview/260/841/181/concept-development-device-flat.jpg",
        src:"https://raw.githubusercontent.com/AboALhasanx/json-files/refs/heads/main/mobApp_quiz.json"},
-  iot:{title:"اختبار إنترنت الأشياء",desc:"",
-       img:"https://images.unsplash.com/photo-1555664424-778a1e5e1b48?q=80&w=2070&auto=format&fit=crop",icon:"fa-microchip",
+  iot:{title:"اختبار إنترنت الأشياء",desc:" ",
+       img:"https://images.unsplash.com/photo-1555664424-778a1e5e1b48?q=80&w=2070&auto=format&fit=crop",
        src:"https://raw.githubusercontent.com/AboALhasanx/json-files/refs/heads/main/iot_quiz.json"}
 };
 
 const tg=window.Telegram?.WebApp;
-const app=document.getElementById("app"),barTitle=document.getElementById("barTitle"),
-      backBtn=document.getElementById("backBtn"),themeIcon=document.getElementById("themeIcon");
+const app=document.getElementById("app"),barTitle=document.getElementById("barTitle"),backBtn=document.getElementById("backBtn"),themeBtn=document.getElementById("themeBtn");
 
-/* ثيم */
-function applyTheme(th){document.documentElement.setAttribute('data-theme',th);themeIcon.className = th==='dark'?'fa-regular fa-sun':'fa-regular fa-moon';}
+/* الثيم */
+function applyTheme(th){document.documentElement.setAttribute('data-theme',th);themeBtn.textContent=th==='dark'?'🌞':'🌙';}
 applyTheme(localStorage.theme ?? ((tg&&tg.themeParams?.bg_color)==='#000000'?'dark':'light'));
 function toggleTheme(){const th=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';localStorage.theme=th;applyTheme(th);}
+
+let quizData=[],answers=[];
 
 /* واجهة البداية */
 function renderHome(){
   backBtn.style.display="none";barTitle.textContent="كوزات واختبارات MCQ";
   app.innerHTML='<section class="hero">'+
-    Object.entries(COURSES).map(([k,v])=>`
-      <div class="course-card" onclick="startQuiz('${k}')">
-        <div class="card-thumb" style="background-image:url('${v.img}')">
-          <i class="fa-solid ${v.icon}"></i>
-        </div>
-        <div class="card-body"><h3>${v.title}</h3><p>${v.desc}</p></div>
-      </div>`).join("")+
-    '</section>';
+     Object.entries(COURSES).map(([k,v])=>`
+       <div class="course-card" onclick="startQuiz('${k}')">
+         <div class="card-thumb" style="background-image:url('${v.img}')"></div>
+         <div class="card-body"><h3>${v.title}</h3><p>${v.desc}</p></div>
+       </div>`).join("")+
+     '</section>';
 }
 
-/* تشغيل الاختبار */
-let quizData=[],answers=[];
+/* بدء اختبار */
 function startQuiz(key){
-  const {title,src}=COURSES[key];backBtn.style.display="inline-flex";barTitle.textContent=title;
-  app.innerHTML=`<div class="container"><div id="quiz"></div>
-     <button id="submit" class="btn btn-main mt-3 btn-icon" disabled>
-        <i class="fa-solid fa-circle-check"></i><span>إظهار النتيجة</span>
-     </button></div>`;
+  const {title,src}=COURSES[key];backBtn.style.display="inline-block";barTitle.textContent=title;
+  app.innerHTML=`<div class="container"><div id="quiz"></div><button id="submit" class="btn btn-main mt-3" disabled>إظهار النتيجة</button></div>`;
   fetch(src).then(r=>r.json()).then(d=>{quizData=d;renderQuestions();});
 }
-
 function renderQuestions(){
   const box=document.getElementById("quiz");box.innerHTML="";
   quizData.forEach((q,i)=>{
@@ -173,15 +159,15 @@ function renderQuestions(){
 /* متابعة التحديد */
 document.addEventListener("change",e=>{
  if(e.target.type!=="radio")return;
- document.getElementById(`lbl-${e.target.name.slice(1)}-${e.target.value}`)
-         .classList.add("selected");
- const ready=quizData.every((_,i)=>document.querySelector(`input[name=q${i}]:checked`));
- document.getElementById("submit").disabled=!ready;
+ const name=e.target.name;
+ document.querySelectorAll(`input[name="${name}"]`).forEach(inp=>{
+   document.getElementById(`lbl-${name.slice(1)}-${inp.value}`).classList.toggle("selected",inp.checked);});
+ const filled=quizData.every((_,i)=>document.querySelector(`input[name=q${i}]:checked`));document.getElementById("submit").disabled=!filled;
 });
 
-/* أزرار */
+/* أزرار النتائج */
 document.addEventListener("click",e=>{
- if(e.target.id==="submit"){showScore();e.target.remove();addReviewButton();}
+ if(e.target.id==="submit"){showScore();e.target.remove();document.querySelector('.container').insertAdjacentHTML("afterbegin",`<button id="reviewBtn" class="btn btn-sec mt-2">🔍 عرض التصحيح</button>`);}
  if(e.target.id==="reviewBtn"){showReview();e.target.remove();}
 });
 
@@ -190,40 +176,26 @@ function showScore(){
  const score=answers.reduce((s,a,i)=>a===quizData[i].correct_option_id?s+1:s,0);
  const pass=score>=Math.ceil(quizData.length/2);
  document.querySelector('.container').insertAdjacentHTML("afterbegin",
-   `<div class="result-box ${pass?'pass':'fail'}">
-      ${pass?'مبروك':'حظًا أوفر'}! درجتك <span>${score}</span> من <span>${quizData.length}</span>
-    </div>`);
- addFooter();window.scrollTo({top:0,behavior:"smooth"});
+   `<div class="result-box ${pass?'pass':'fail'}">${pass?'مبروك':'حظًا أوفر'}! درجتك <span>${score}</span> من <span>${quizData.length}</span></div>`);
+ addFooter();
+ window.scrollTo({top:0,behavior:"smooth"});
 }
-
-function addReviewButton(){
- document.querySelector('.container').insertAdjacentHTML("afterbegin",
-   `<button id="reviewBtn" class="btn btn-sec mt-2 btn-icon">
-      <i class="fa-solid fa-magnifying-glass"></i><span>عرض التصحيح</span>
-    </button>`);
-}
-
 function showReview(){
  quizData.forEach((q,i)=>{
    const c=q.correct_option_id;document.getElementById(`lbl-${i}-${c}`).classList.add("correct");
    const u=answers[i];if(u!==c)document.getElementById(`lbl-${i}-${u}`).classList.add("wrong");});
  addFooter();window.scrollTo({top:0,behavior:"smooth"});
 }
-
 function addFooter(){
  if(document.getElementById("footerBtns"))return;
  document.querySelector('.container').insertAdjacentHTML("beforeend",
    `<div id="footerBtns" class="text-center mt-4">
-      <button class="btn btn-main mb-2 btn-icon" onclick="renderHome()">
-        <i class="fa-solid fa-house"></i><span>العودة للاختبارات</span>
-      </button>
-      <button class="btn btn-sec btn-icon" onclick="tg?tg.close():window.close()">
-        <i class="fa-solid fa-xmark"></i><span>إغلاق النافذة</span>
-      </button>
+      <button class="btn btn-main mb-2" onclick="renderHome()">العودة للاختبارات</button>
+      <button class="btn btn-sec" onclick="tg?tg.close():window.close()">إغلاق النافذة</button>
     </div>`);
 }
 
-/* بدء التطبيق */
+/* تشغيل */
 renderHome();
 </script>
 </body></html>
