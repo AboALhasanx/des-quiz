@@ -1,1 +1,29 @@
 
+body{
+    font-family:"Cairo",sans-serif;
+    background:#f8f9fa;
+    color:#212529;
+}
+.card{
+    border:1px solid #ced4da;
+    border-radius:8px;
+    background:#fff;
+    margin-top:1rem;
+    padding:1rem 1.25rem;
+}
+.option{
+    display:flex;
+    align-items:center;
+    border:1px solid #ddd;
+    border-radius:6px;
+    padding:.35rem .75rem;
+    margin:.4rem 0;
+    cursor:pointer;
+    transition:.15s;
+}
+.option input{margin-left:.5rem;cursor:pointer}
+.option.selected{border:2px solid #000}
+.option.correct   {background:#d1e7dd;border-color:#0f5132;color:#0f5132}  /* 🟢 */
+.option.wrong     {background:#f8d7da;border-color:#842029;color:#842029}  /* 🔴 */
+.btn-main{background:#27ae60;border:none}
+.btn-main:disabled{opacity:.5}
