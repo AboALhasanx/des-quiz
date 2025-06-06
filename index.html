@@ -1,228 +1,228 @@
 <!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8">
-<title>منصة الاختبارات</title>
+<title>كوزات واختبارات MCQ</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
+<!-- ❶ لا نستخدم integrity – فقط ملف JS يُحمّل الأيقونات -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
-/* ========== لوحــة الثيـم ========== */
+/* ===== لوحة الثيم الرمادي ===== */
 :root[data-theme="light"]{
-  --bg           : #fafafa;     /* خلفية شبه بيضاء */
-  --text         : #222;
-  --card-bg      : #ffffff;
-  --card-border  : #e0e0e0;
+  --bg:#f4f4f4;        --text:#212121;
+  --card-bg:#ffffff;   --card-border:#d7d7d7;
 
-  /* اللون البراندي الذهبي */
-  --primary      : #ae8912;
-  --primary-hov  : #ae8912;
+  --primary:#505050;   --primary-hov:#3e3e3e;
+  --secondary:#7e7e7e; --secondary-hov:#6d6d6d;
+  --topbar-bg:#3c3c3c;
 
-  --secondary    : #6c757d;
-  --secondary-hov: #7a8289;
+  --grad-from:#e7e7e7; --grad-to:#cacaca;
+  --option-sel:#000;
 
-  --topbar-bg    : #ae8912;
-
-  --option-sel   : #000;
-
-  /* ألوان التصحيح */
-  --correct-bg   : #d1e7dd; --correct-bd:#198754;
-  --wrong-bg     : #f8d7da; --wrong-bd :#dc3545;
+  --correct-bg:#d1e7dd; --correct-bd:#198754;
+  --wrong-bg:#f8d7da;   --wrong-bd:#dc3545;
 }
-
 :root[data-theme="dark"]{
-  --bg           : #141414;     /* غامق جداً */
-  --text         : #f1f1f1;
-  --card-bg      : #1f1f1f;
-  --card-border  : #353535;
+  --bg:#141414;        --text:#eeeeee;
+  --card-bg:#1f1f1f;   --card-border:#404040;
 
-  --primary      : #ae8912;
-  --primary-hov  : #ae8912;
+  --primary:#707070;   --primary-hov:#808080;
+  --secondary:#535353; --secondary-hov:#636363;
+  --topbar-bg:#2a2a2a;
 
-  --secondary    : #495057;
-  --secondary-hov: #5a6268;
+  --grad-from:#2b2b2b; --grad-to:#494949;
+  --option-sel:#fff;
 
-  --topbar-bg    : #ae8912;
-
-  --option-sel   : #fff;
-
-  --correct-bg   : #113d2d; --correct-bd:#2aa15f;
-  --wrong-bg     : #5b2028; --wrong-bd :#dc3545;
+  --correct-bg:#113d2d; --correct-bd:#2aa15f;
+  --wrong-bg:#5b2028;   --wrong-bd:#dc3545;
 }
 
-/* —— أساسيات —— */
+/* — أساسيات — */
 *{box-sizing:border-box;margin:0;scroll-behavior:smooth}
-body{font-family:'Times New Roman', Times, serif
-,sans-serif;background:var(--bg);color:var(--text)}
-/* شريط علوي */
-.topbar{background:var(--topbar-bg);color:#fff;padding:.9rem 1.2rem;display:flex;align-items:center;gap:10px}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text)}
+i{pointer-events:none}           /* الأيقونات لا تلتقط النقر */
+
+/* شريط علوي ثابت */
+.topbar{background:var(--topbar-bg);color:#fff;padding:.9rem 1.2rem;
+       display:flex;align-items:center;gap:10px;
+       position:sticky;top:0;z-index:1000}
 .topbar h1{font-size:1.2rem;margin:0 auto 0 0}
-.back-btn{background:#ffffff26;border:none;color:#fff;padding:.2rem 1rem;border-radius:8px;cursor:pointer;font-size:.95rem}
-.back-btn:hover{background:#ffffff40}
-.theme-toggle{background:#ffffff26;border:none;color:#fff;border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center}
-.theme-toggle:hover{background:#ffffff40}
+.btn-icon{display:inline-flex;align-items:center;gap:.35rem}
 
-/* محتوى مركزي */
-.container{max-width:700px;margin:auto;padding:24px}
+.back-btn,.theme-toggle{
+  background:#ffffff26;border:none;color:#fff;border-radius:8px;
+  cursor:pointer;font-size:1rem;padding:.45rem .9rem;transition:.15s}
+.back-btn:hover,.theme-toggle:hover{background:#ffffff3d}
+.theme-toggle{width:36px;height:36px;border-radius:50%;padding:0}
 
-/* زر عام */
+/* شاشة البداية */
+.hero{min-height:calc(100vh - 52px);padding:32px;
+      background:linear-gradient(135deg,var(--grad-from),var(--grad-to));
+      display:flex;flex-direction:column;justify-content:center}
+.course-card{background:var(--card-bg);backdrop-filter:blur(6px);
+             border-radius:18px;border:1px solid var(--card-border);
+             width:90%;max-width:640px;margin:18px auto;padding:28px;
+             display:flex;gap:28px;align-items:center;cursor:pointer;
+             box-shadow:0 8px 20px rgba(0,0,0,.15);transition:.25s}
+.course-card:hover{transform:translateY(-6px);box-shadow:0 12px 28px rgba(0,0,0,.25)}
+.card-thumb{flex:0 0 120px;height:120px;border-radius:16px;background-size:cover;background-position:center;position:relative}
+.card-thumb i{font-size:2.5rem;color:#ffffffcc;position:absolute;inset:0;margin:auto}
+.card-body{flex:1}
+.card-body h3{margin-bottom:6px;font-size:1.15rem;font-weight:700}
+.card-body p{font-size:.9rem;opacity:.8;margin:0}
+
+/* أزرار */
 .btn{display:block;width:90%;max-width:520px;margin:12px auto;padding:.9rem;border:none;border-radius:12px;font-size:1.05rem;cursor:pointer;transition:.15s;box-shadow:0 2px 5px rgba(0,0,0,.1)}
-.btn-main{background:var(--primary);color:#fff}
-.btn-main:hover{background:var(--primary-hov)}
-.btn-sec{background:var(--secondary);color:#fff}
-.btn-sec:hover{background:var(--secondary-hov)}
-.btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+.btn-main{background:var(--primary);color:#fff}.btn-main:hover{background:var(--primary-hov)}
+.btn-sec {background:var(--secondary);color:#fff}.btn-sec:hover {background:var(--secondary-hov)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn i{margin-inline-start:.45rem;font-size:.9rem}
 
 /* بطاقات الأسئلة */
-.card{background:var(--card-bg);border-radius:12px;margin-top:20px;padding:1.3rem 1.4rem;box-shadow:0 2px 6px rgba(0,0,0,.08);direction:ltr;text-align:left;border:1.5px solid var(--card-border)}
+.card{background:var(--card-bg);border-radius:12px;padding:1.3rem 1.4rem;margin-top:20px;
+      box-shadow:0 2px 6px rgba(0,0,0,.08);direction:ltr;text-align:left;border:1.5px solid var(--card-border)}
 .card h4{margin-bottom:.8rem;font-size:1.05rem}
-
-/* خيار */
 .option{display:flex;align-items:center;border:2px solid var(--card-border);border-radius:10px;padding:.55rem .85rem;margin:.5rem 0;cursor:pointer;transition:.15s;font-size:.97rem}
 .option input{margin-right:.6rem;cursor:pointer}
 .option.selected{border-color:var(--option-sel)}
 .option.correct{border-color:var(--correct-bd);background:var(--correct-bg)}
 .option.wrong  {border-color:var(--wrong-bd);background:var(--wrong-bg)}
 
-/* صندوق نتيجة */
+/* نتيجة */
 .result-box{max-width:520px;margin:0 auto 1.5rem;padding:1.2rem;border-radius:12px;text-align:center;font-size:1.1rem;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .pass{background:var(--correct-bg);color:var(--correct-bd)}
 .fail{background:var(--wrong-bg);color:var(--wrong-bd)}
 </style>
 
-<body>
-<!-- شريط أعلى -->
+<body style="max-width: 800px; margin: auto; padding: 0 10px;">
+<!-- شريط علوي -->
 <div class="topbar">
-  <button id="backBtn" class="back-btn" style="display:none" onclick="renderHome()">رجوع</button>
-  <h1 id="barTitle">منصة الاختبارات</h1>
-  <button id="themeBtn" class="theme-toggle" onclick="toggleTheme()">🌙</button>
+  <button id="backBtn" class="back-btn btn-icon" style="display:none" onclick="renderHome()">
+    <i class="fa-solid fa-arrow-left"></i><span>رجوع</span>
+  </button>
+  <h1 id="barTitle">كوزات واختبارات MCQ</h1>
+  <button id="themeBtn" class="theme-toggle" onclick="toggleTheme()">
+    <i id="themeIcon" class="fa-regular fa-moon"></i>
+  </button>
 </div>
 
-<div id="app" class="container"></div>
+<div id="app"></div>
 
 <script>
-/* روابط JSON */
+/* بيانات المواد + أيقونات */
 const COURSES={
-  des   :{title:"اختبار تصميم وتحليل الأنظمة",
-          src:"https://raw.githubusercontent.com/AboALhasanx/json-files/refs/heads/main/dess_quiz.json"},
-  mobile:{title:"اختبار تطبيقات الموبايل",
-          src:"https://raw.githubusercontent.com/AboALhasanx/json-files/refs/heads/main/mobApp_quiz.json"},
-  iot   :{title:"اختبار إنترنت الأشياء",
-          src:"https://raw.githubusercontent.com/AboALhasanx/json-files/refs/heads/main/iot_quiz.json"}
+  des:{title:"اختبار تصميم وتحليل الأنظمة",desc:"",
+       img:"https://i.ibb.co/tMJfzZPP/1744451978496.png",icon:"fa-sitemap",
+       src:"https://raw.githubusercontent.com/AboALhasanx/json-files/refs/heads/main/dess_quiz.json"},
+  mobile:{title:"اختبار تطبيقات الموبايل",desc:"",
+       img:"https://c0.wallpaperflare.com/preview/260/841/181/concept-development-device-flat.jpg",icon:"fa-mobile-screen-button",
+       src:"https://raw.githubusercontent.com/AboALhasanx/json-files/refs/heads/main/mobApp_quiz.json"},
+  iot:{title:"اختبار إنترنت الأشياء",desc:"",
+       img:"https://images.unsplash.com/photo-1555664424-778a1e5e1b48?q=80&w=2070&auto=format&fit=crop",icon:"fa-microchip",
+       src:"https://raw.githubusercontent.com/AboALhasanx/json-files/refs/heads/main/iot_quiz.json"}
 };
 
-const tg = window.Telegram?.WebApp;
-const app      = document.getElementById("app");
-const barTitle = document.getElementById("barTitle");
-const backBtn  = document.getElementById("backBtn");
-const themeBtn = document.getElementById("themeBtn");
+const tg=window.Telegram?.WebApp;
+const app=document.getElementById("app"),barTitle=document.getElementById("barTitle"),
+      backBtn=document.getElementById("backBtn"),themeIcon=document.getElementById("themeIcon");
 
-/* ============ ثيم ============ */
-function applyTheme(th){
-   document.documentElement.setAttribute('data-theme',th);
-   themeBtn.textContent = th==='dark'?'🌞':'🌙';
-}
-function initTheme(){
-   let th=localStorage.theme;
-   if(!th){
-      th = (tg && tg.themeParams?.bg_color === '#000000') ? 'dark' : 'light';
-   }
-   applyTheme(th);
-}
-function toggleTheme(){
-   const cur=document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light';
-   const next=cur==='dark'?'light':'dark';
-   localStorage.theme=next;
-   applyTheme(next);
-}
-initTheme();
+/* ثيم */
+function applyTheme(th){document.documentElement.setAttribute('data-theme',th);themeIcon.className = th==='dark'?'fa-regular fa-sun':'fa-regular fa-moon';}
+applyTheme(localStorage.theme ?? ((tg&&tg.themeParams?.bg_color)==='#000000'?'dark':'light'));
+function toggleTheme(){const th=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';localStorage.theme=th;applyTheme(th);}
 
-/* ============ منطق الاختبارات ============ */
-let quizData=[],answers=[];
-
-/* شاشة البداية */
+/* واجهة البداية */
 function renderHome(){
-  backBtn.style.display="none";
-  barTitle.textContent="منصة الاختبارات";
-  app.innerHTML=`<h2 class="fw-bold mb-4" style="text-align:center">اختر الاختبار</h2>`+
-    Object.entries(COURSES).map(([k,v])=>`<button class="btn btn-main" onclick="startQuiz('${k}')">${v.title}</button>`).join("");
+  backBtn.style.display="none";barTitle.textContent="كوزات واختبارات MCQ";
+  app.innerHTML='<section class="hero">'+
+    Object.entries(COURSES).map(([k,v])=>`
+      <div class="course-card" onclick="startQuiz('${k}')">
+        <div class="card-thumb" style="background-image:url('${v.img}')">
+          <i class="fa-solid ${v.icon}"></i>
+        </div>
+        <div class="card-body"><h3>${v.title}</h3><p>${v.desc}</p></div>
+      </div>`).join("")+
+    '</section>';
 }
 
+/* تشغيل الاختبار */
+let quizData=[],answers=[];
 function startQuiz(key){
-  const {title,src}=COURSES[key];
-  backBtn.style.display="inline-block";
-  barTitle.textContent=title;
-  app.innerHTML=`<div id="quiz"></div><button id="submit" class="btn btn-main mt-3" disabled>إظهار النتيجة</button>`;
+  const {title,src}=COURSES[key];backBtn.style.display="inline-flex";barTitle.textContent=title;
+  app.innerHTML=`<div class="container"><div id="quiz"></div>
+     <button id="submit" class="btn btn-main mt-3 btn-icon" disabled>
+        <i class="fa-solid fa-circle-check"></i><span>إظهار النتيجة</span>
+     </button></div>`;
   fetch(src).then(r=>r.json()).then(d=>{quizData=d;renderQuestions();});
 }
 
 function renderQuestions(){
-  const box=document.getElementById("quiz"); box.innerHTML="";
+  const box=document.getElementById("quiz");box.innerHTML="";
   quizData.forEach((q,i)=>{
-    const card=document.createElement("div");
-    card.className="card";
-    card.innerHTML=`<h4>${i+1}. ${q.question}</h4>`+q.options.map((opt,idx)=>`
+    box.insertAdjacentHTML("beforeend",
+      `<div class="card"><h4>${i+1}. ${q.question}</h4>`+
+      q.options.map((opt,idx)=>`
         <label class="option" id="lbl-${i}-${idx}">
           <input type="radio" name="q${i}" value="${idx}"> ${opt}
-        </label>`).join("");
-    box.appendChild(card);
+        </label>`).join("")+
+      '</div>');
   });
 }
 
 /* متابعة التحديد */
 document.addEventListener("change",e=>{
  if(e.target.type!=="radio")return;
- const name=e.target.name;
- document.querySelectorAll(`input[name="${name}"]`).forEach(inp=>{
-   document.getElementById(`lbl-${name.slice(1)}-${inp.value}`).classList.toggle("selected",inp.checked);
- });
- const check=quizData.map((_,i)=>{const sel=document.querySelector(`input[name=q${i}]:checked`);return sel?Number(sel.value):null;});
- document.getElementById("submit").disabled = check.includes(null);
+ document.getElementById(`lbl-${e.target.name.slice(1)}-${e.target.value}`)
+         .classList.add("selected");
+ const ready=quizData.every((_,i)=>document.querySelector(`input[name=q${i}]:checked`));
+ document.getElementById("submit").disabled=!ready;
 });
 
-/* أزرار النتيجة والتصحيح */
+/* أزرار */
 document.addEventListener("click",e=>{
- const id=e.target.id;
- if(id==="submit"){showScore();e.target.remove();addReviewButton();}
- else if(id==="reviewBtn"){showReview();e.target.remove();}
+ if(e.target.id==="submit"){showScore();e.target.remove();addReviewButton();}
+ if(e.target.id==="reviewBtn"){showReview();e.target.remove();}
 });
 
 function showScore(){
  answers=quizData.map((_,i)=>Number(document.querySelector(`input[name=q${i}]:checked`).value));
- const score=answers.reduce((s,a,i)=> a===quizData[i].correct_option_id? s+1 : s ,0);
- const pass = score >= Math.ceil(quizData.length/2);
- const box  = document.createElement("div");
- box.className=`result-box ${pass?'pass':'fail'}`;
- box.innerHTML=pass?`مبروك! درجتك <span>${score}</span> من <span>${quizData.length}</span>`
-                  :`حظًا أوفر! درجتك <span>${score}</span> من <span>${quizData.length}</span>`;
- app.prepend(box);
- addFooterButtons();
- window.scrollTo({top:0,behavior:"smooth"});
+ const score=answers.reduce((s,a,i)=>a===quizData[i].correct_option_id?s+1:s,0);
+ const pass=score>=Math.ceil(quizData.length/2);
+ document.querySelector('.container').insertAdjacentHTML("afterbegin",
+   `<div class="result-box ${pass?'pass':'fail'}">
+      ${pass?'مبروك':'حظًا أوفر'}! درجتك <span>${score}</span> من <span>${quizData.length}</span>
+    </div>`);
+ addFooter();window.scrollTo({top:0,behavior:"smooth"});
 }
 
 function addReviewButton(){
- app.insertAdjacentHTML("afterbegin",`<button id="reviewBtn" class="btn btn-sec mt-2">🔍 عرض التصحيح</button>`);
+ document.querySelector('.container').insertAdjacentHTML("afterbegin",
+   `<button id="reviewBtn" class="btn btn-sec mt-2 btn-icon">
+      <i class="fa-solid fa-magnifying-glass"></i><span>عرض التصحيح</span>
+    </button>`);
 }
 
 function showReview(){
  quizData.forEach((q,i)=>{
-   const cor=q.correct_option_id;
-   document.getElementById(`lbl-${i}-${cor}`).classList.add("correct");
-   const user=answers[i];
-   if(user!==cor){document.getElementById(`lbl-${i}-${user}`).classList.add("wrong");}
- });
- addFooterButtons();
- window.scrollTo({top:0,behavior:"smooth"});
+   const c=q.correct_option_id;document.getElementById(`lbl-${i}-${c}`).classList.add("correct");
+   const u=answers[i];if(u!==c)document.getElementById(`lbl-${i}-${u}`).classList.add("wrong");});
+ addFooter();window.scrollTo({top:0,behavior:"smooth"});
 }
 
-/* أسفل الصفحة */
-function addFooterButtons(){
+function addFooter(){
  if(document.getElementById("footerBtns"))return;
- app.insertAdjacentHTML("beforeend",`
-   <div id="footerBtns" class="text-center mt-4">
-     <button class="btn btn-main mb-2" onclick="renderHome()">العودة للاختبارات</button>
-     <button class="btn btn-sec"  onclick="tg?tg.close():window.close()">إغلاق النافذة</button>
-   </div>`);
+ document.querySelector('.container').insertAdjacentHTML("beforeend",
+   `<div id="footerBtns" class="text-center mt-4">
+      <button class="btn btn-main mb-2 btn-icon" onclick="renderHome()">
+        <i class="fa-solid fa-house"></i><span>العودة للاختبارات</span>
+      </button>
+      <button class="btn btn-sec btn-icon" onclick="tg?tg.close():window.close()">
+        <i class="fa-solid fa-xmark"></i><span>إغلاق النافذة</span>
+      </button>
+    </div>`);
 }
 
-/* تشغيل */
+/* بدء التطبيق */
 renderHome();
 </script>
 </body></html>
