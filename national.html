@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="utf-8">
+  <title>الاختبارات الوطني MCQ</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    /* (نفس الستايل الكامل من preliminary.html) */
+    :root[data-theme="light"] {
+      --bg: #f4f4f4;
+      --text: #212121;
+      --card-bg: #ffffff;
+      --card-border: #d7d7d7;
+      --primary: #505050;
+      --primary-hov: #3e3e3e;
+      --secondary: #7e7e7e;
+      --secondary-hov: #6d6d6d;
+      --topbar-bg: #3c3c3c;
+      --grad-to: #cacaca;
+      --option-sel: #000;
+      --correct-bg: #d1e7dd;
+      --correct-bd: #198754;
+      --wrong-bg: #f8d7da;
+      --wrong-bd: #dc3545;
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #141414;
+      --text: #eeeeee;
+      --card-bg: #1f1f1f;
+      --card-border: #404040;
+      --primary: #707070;
+      --primary-hov: #808080;
+      --secondary: #535353;
+      --secondary-hov: #636363;
+      --topbar-bg: #2a2a2a;
+      --grad-to: #494949;
+      --option-sel: #fff;
+      --correct-bg: #113d2d;
+      --correct-bd: #2aa15f;
+      --wrong-bg: #5b2028;
+      --wrong-bd: #dc3545;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .topbar {
+      background: var(--topbar-bg);
+      color: #fff;
+      padding: .9rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .topbar h1 {
+      font-size: 1.2rem;
+      margin: 0 auto 0 0;
+    }
+
+    .btn {
+      display: block;
+      width: 90%;
+      max-width: 520px;
+      margin: 12px auto;
+      padding: .9rem;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: .15s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.226);
+    }
+
+    .back-btn,
+    .theme-toggle {
+      background: #ffffff26;
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .back-btn {
+      border-radius: 8px;
+      padding: .25rem 1.1rem;
+      font-size: .95rem;
+    }
+
+    .back-btn:hover,
+    .theme-toggle:hover {
+      background: #ffffff3d;
+    }
+
+    .hero {
+      min-height: calc(100vh - 52px);
+      padding: 32px;
+      background: var(--grad-to);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .course-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(6px);
+      border-radius: 18px;
+      border: 1px solid var(--card-border);
+      width: 90%;
+      max-width: 640px;
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .15);
+      transition: .25s;
+      padding: 20px;
+    }
+
+    .course-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, .25);
+    }
+
+    .card-thumb {
+      flex: 0 0 120px;
+      height: 120px;
+      border-radius: 16px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .card-body {
+      flex: 1;
+    }
+
+    .card-body h3 {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+
+    .part-card {
+      background: var(--secondary);
+      color: #fff;
+      border-radius: 18px;
+      width: 90%;
+      max-width: 300px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .15);
+      transition: .25s;
+    }
+
+    .part-card:hover {
+      background: var(--secondary-hov);
+      transform: translateY(-6px);
+    }
+
+    .part-card h4 {
+      font-size: 1.2rem;
+    }
+
+    .container {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.3rem;
+      margin-top: 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
+      direction: ltr;
+      text-align: left;
+    }
+
+    .card h4 {
+      margin-bottom: .8rem;
+      font-size: 1.5rem;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      border: 2px solid var(--card-border);
+      border-radius: 10px;
+      padding: .55rem .85rem;
+      margin: .5rem 0;
+      cursor: pointer;
+      transition: .15s;
+    }
+
+    .option input {
+      margin-right: .6rem;
+      cursor: pointer;
+    }
+
+    .option.selected {
+      border-color: var(--option-sel);
+    }
+
+    .option.correct {
+      border-color: var(--correct-bd);
+      background: var(--correct-bg);
+    }
+
+    .option.wrong {
+      border-color: var(--wrong-bd);
+      background: var(--wrong-bg);
+    }
+
+    .result-box {
+      max-width: 520px;
+      margin: 0 auto 1.5rem;
+      padding: 1.2rem;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
+    }
+
+    .pass {
+      background: var(--correct-bg);
+      color: var(--correct-bd);
+    }
+
+    .fail {
+      background: var(--wrong-bg);
+      color: var(--wrong-bd);
+    }
+
+    footer {
+      background: var(--card-bg);
+      border-top: 1px solid var(--card-border);
+      padding: 1rem 0;
+      margin-top: 2rem;
+    }
+
+    footer .footer-container {
+      max-width: 640px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    footer .footer-text {
+      font-size: 0.95rem;
+      color: var(--secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    footer .footer-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    footer .footer-link:hover {
+      color: var(--primary-hov);
+      text-decoration: underline;
+    }
+
+    footer .attribution {
+      font-size: 0.85rem;
+      color: var(--secondary);
+      opacity: 0.7;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <button id="backBtn" class="back-btn" style="display:none" onclick="goBack()">رجوع</button>
+    <h1 id="barTitle" style="margin: auto;">الاختبارات الوطني MCQ</h1>
+    <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">🌙</button>
+  </div>
+
+  <div id="app"></div>
+
+  <script>
+    const COURSES = {
+      en: { title: "اختبار اللغة الإنجليزية", folder: "en_quizzes", img: "https://img.freepik.com/free-vector/hand-drawn-english-book-illustration_23-2149517759.jpg?semt=ais_items_boosted&w=740" },
+      ar: { title: "اختبار اللغة العربية", folder: "ar_quizzes", img: "https://www.asfourabooks.com/cdn/shop/articles/scaled.jpg?v=1642334188" },
+      com: { title: "اختبار الحاسوب", folder: "com_quizzes", img: "https://images.pexels.com/photos/392018/pexels-photo-392018.jpeg?cs=srgb&dl=pexels-vojtech-okenka-127162-392018.jpg&fm=jpg" }
+    };
+    const BASE_API = "https://api.github.com/repos/AboALhasanx/json-files/contents";
+    const ORDINALS = ["الأول", "الثاني", "الثالث", "الرابع", "الخامس", "السادس", "السابع", "الثامن", "التاسع", "العاشر"];
+
+    let state = { page: 'home', course: '', parts: [], quizData: [] };
+    const app = document.getElementById('app'), barTitle = document.getElementById('barTitle'), backBtn = document.getElementById('backBtn');
+
+    function applyTheme(th) {
+      document.documentElement.setAttribute('data-theme', th);
+      document.getElementById('themeToggle').textContent = th === 'dark' ? '🌞' : '🌙';
+    }
+    applyTheme(localStorage.theme || (window.Telegram?.WebApp.themeParams.bg_color === '#000000' ? 'dark' : 'light'));
+    function toggleTheme() {
+      const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      localStorage.theme = t;
+      applyTheme(t);
+    }
+
+    function goBack() {
+      if (state.page === 'parts') return renderHome();
+      if (state.page === 'quiz') return renderParts(state.course);
+    }
+
+    function renderHome() {
+      state.page = 'home';
+      backBtn.style.display = 'none';
+      barTitle.textContent = 'الاختبارات الوطني MCQ';
+      app.innerHTML = '<section class="hero">' +
+        Object.entries(COURSES).map(([k,v]) =>
+          `<div class="course-card" onclick="renderParts('${k}')">` +
+          `<div class="card-thumb" style="background-image:url('${v.img}')"></div>` +
+          `<div class="card-body"><h3>${v.title}</h3></div></div>`
+        ).join('') + '</section>';
+    }
+
+    function renderParts(courseKey) {
+      state.page = 'parts';
+      state.course = courseKey;
+      backBtn.style.display = 'inline-flex';
+      barTitle.textContent = COURSES[courseKey].title;
+      app.innerHTML = '<section class="hero" id="parts"></section>';
+      fetch(`${BASE_API}/${COURSES[courseKey].folder}?ref=main`)
+        .then(r => r.json())
+        .then(files => {
+          state.parts = files.filter(f => f.name.endsWith('.json')).map((f,i) => ({ src: f.download_url, label: `الجزء ${ORDINALS[i]}` }));
+          const partsEl = document.getElementById('parts');
+          state.parts.forEach(p =>
+            partsEl.insertAdjacentHTML('beforeend', `<div class="part-card" onclick="loadQuiz('${p.src}')"><h4>${p.label}</h4></div>`)
+          );
+        })
+        .catch(() => document.getElementById('parts').innerHTML = '<p>خطأ في جلب الأجزاء.</p>');
+    }
+
+    function loadQuiz(src) {
+      state.page = 'quiz';
+      backBtn.style.display = 'inline-flex';
+      barTitle.textContent = 'الأسئلة';
+      app.innerHTML = '<div class="container" id="quizContainer"></div>';
+      const qc = document.getElementById('quizContainer');
+      qc.innerHTML = '<p>جاري التحميل...</p>';
+      fetch(src)
+        .then(r => r.json())
+        .then(d => { state.quizData = d; renderQuiz(); })
+        .catch(e => qc.innerHTML = `<p>خطأ: ${e.message}</p>`);
+    }
+
+    function renderQuiz() {
+      const qc = document.getElementById('quizContainer');
+      qc.innerHTML = '';
+      state.quizData.forEach((q,i) =>
+        qc.insertAdjacentHTML('beforeend',
+          `<div class="card"><h4>${i+1}. ${q.question}</h4>` +
+          q.options.map((opt,idx) =>
+            `<label class="option" id="lbl-${i}-${idx}"><input type="radio" name="q${i}" value="${idx}"> ${opt}</label>`
+          ).join('') + `</div>`
+        )
+      );
+      qc.insertAdjacentHTML('beforeend', '<button id="submitBtn" class="btn btn-main" disabled>إظهار النتيجة</button>');
+      document.querySelectorAll('input[type=radio]').forEach(i=>i.onchange=()=>{
+        document.getElementById('submitBtn').disabled = !state.quizData.every((_,j) => document.querySelector(`input[name=q${j}]:checked`));
+      });
+      document.getElementById('submitBtn').onclick = showScore;
+    }
+
+    function showScore() {
+  const qc = document.getElementById('quizContainer');
+  // حساب الدرجة…
+  const answers = state.quizData.map((_,i)=>Number(
+    document.querySelector(`input[name=q${i}]:checked`).value
+  ));
+  const score = answers.reduce((s,a,i)=>a===state.quizData[i].correct_option_id?s+1:s,0);
+  const pass = score >= Math.ceil(state.quizData.length/2);
+
+  // 1) ندرج نتيجة الاختبار وزر "عرض التصحيح"
+  qc.insertAdjacentHTML('afterbegin',
+    `<div class="result-box ${pass?'pass':'fail'}">
+       ${pass?'مبروك':'حظًّا أوفر'}! درجتك ${score} من ${state.quizData.length}
+     </div>
+     <button id="reviewBtn" class="btn btn-sec">عرض التصحيح</button>`
+  );
+
+  // 2) نحذف زرّ "إظهار النتيجة"
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) submitBtn.remove();
+
+  // 3) نُدرج زرّ "إعادة تحميل الأسئلة"
+  qc.insertAdjacentHTML('beforeend',
+    `<button id="refreshBtn" class="btn">إعادة تحميل الأسئلة</button>`
+  );
+
+  // 4) رابط الفعاليات
+  document.getElementById('reviewBtn').onclick = () => {
+    state.quizData.forEach((q,i) => {
+      const c = q.correct_option_id;
+      document.getElementById(`lbl-${i}-${c}`).classList.add('correct');
+      const u = Number(document.querySelector(`input[name=q${i}]:checked`).value);
+      if (u !== c) document.getElementById(`lbl-${i}-${u}`).classList.add('wrong');
+    });
+    // بعد العرض النهائي نقدر نُزيل زرّ التصحيح لو أحببت:
+    document.getElementById('reviewBtn').remove();
+  };
+
+  document.getElementById('refreshBtn').onclick = () => {
+  renderQuiz();
+};
+
+}
+
+    renderHome();
+  </script>
+
+  <footer>
+    <div class="footer-container">
+      <p class="footer-text">شكرًا لاستخدامك تطبيق اختبارات MCQ</p>
+      <p class="footer-text attribution">
+        تم تطوير هذا التطبيق بواسطة
+        <a href="https://t.me/ab0_alhasan" target="_blank" class="footer-link">ابـوالـحسن</a>
+      </p>
+    </div>
+  </footer>
+</body>
+
+</html>
