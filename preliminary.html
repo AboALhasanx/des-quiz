@@ -393,49 +393,66 @@
       document.getElementById('submitBtn').onclick = showScore;
     }
 
-    function showScore() {
-      const qc = document.getElementById('quizContainer');
+// دالة عرض النتيجة وتهيئة زرّ "عرض التصحيح"
+function showScore() {
+  const qc = document.getElementById('quizContainer');
 
-      // 1) حساب الدرجة
-      const answers = state.quizData.map((_, i) =>
-        Number(document.querySelector(`input[name=q${i}]:checked`).value)
-      );
-      const score = answers.reduce((s, a, i) => a === state.quizData[i].correct_option_id ? s + 1 : s, 0);
-      const pass = score >= Math.ceil(state.quizData.length / 2);
+  // 1) حساب الإجابات والدرجة
+  const answers = state.quizData.map((_, i) =>
+    Number(document.querySelector(`input[name=q${i}]:checked`).value)
+  );
+  const score = answers.reduce((sum, a, i) =>
+    a === state.quizData[i].correct_option_id ? sum + 1 : sum
+  , 0);
+  const pass = score >= Math.ceil(state.quizData.length / 2);
 
-      // 2) إدراج الـ result-box وزرّ "عرض التصحيح"
-      qc.insertAdjacentHTML('afterbegin',
-        `<div class="result-box ${pass ? 'pass' : 'fail'}">
+  // 2) إدراج صندوق النتيجة وزرّ "عرض التصحيح"
+  qc.insertAdjacentHTML('afterbegin',
+    `<div class="result-box ${pass ? 'pass' : 'fail'}">
        ${pass ? 'مبروك' : 'حظًّا أوفر'}! درجتك ${score} من ${state.quizData.length}
      </div>
-     <button id="reviewBtn" class="btn btn-sec">عرض التصحيح</button>`
-      );
+     <button id="reviewBtn" class="btn btn-sec">🔍 عرض التصحيح</button>`
+  );
 
-      // 3) حذف زرّ "إظهار النتيجة"
-      document.getElementById('submitBtn')?.remove();
+  // 3) إزالة زرّ "إظهار النتيجة"
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) submitBtn.remove();
 
-      // 4) إدراج زرّ "إعادة تحميل الأسئلة"
-      qc.insertAdjacentHTML('beforeend',
-        `<button id="refreshBtn" class="btn">إعادة تحميل الأسئلة</button>`
-      );
+  // 4) صعود إلى صندوق النتيجة ليُرى مباشرة
+  document.querySelector('.result-box')
+          .scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-      // 5) قم بالتمرير للأعلى حتى يظهر result-box
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      tById('quizContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // 5) ربط حدث الضغط على زرّ "عرض التصحيح"
+  document.getElementById('reviewBtn')
+          .addEventListener('click', showReview);
+}
 
-      // 6) ربط الأزرار
-      document.getElementById('reviewBtn').onclick = () => {
-        state.quizData.forEach((q, i) => {
-          const c = q.correct_option_id;
-          document.getElementById(`lbl-${i}-${c}`).classList.add('correct');
-          const u = Number(document.querySelector(`input[name=q${i}]:checked`).value);
-          if (u !== c) document.getElementById(`lbl-${i}-${u}`).classList.add('wrong');
-        });
-        document.getElementById('reviewBtn').remove();
-      };
-
-      document.getElementById('refreshBtn').onclick = () => renderQuiz();
+// دالة تلوين التصحيح وصعود للصندوق
+function showReview() {
+  // 1) تلوين الإجابات الصحيحة والخاطئة
+  state.quizData.forEach((q, i) => {
+    const correctId = q.correct_option_id;
+    // تمييز الصحيح
+    document.getElementById(`lbl-${i}-${correctId}`)
+            .classList.add('correct');
+    // تمييز الخطأ إذا اختاره المستخدم
+    const userChoice = Number(
+      document.querySelector(`input[name=q${i}]:checked`).value
+    );
+    if (userChoice !== correctId) {
+      document.getElementById(`lbl-${i}-${userChoice}`)
+              .classList.add('wrong');
     }
+  });
+
+  // 2) صعود إلى صندوق النتيجة بعد التلوين
+  document.querySelector('.result-box')
+          .scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // 3) إزالة زرّ "عرض التصحيح" بعد الاستخدام
+  const revBtn = document.getElementById('reviewBtn');
+  if (revBtn) revBtn.remove();
+}
 
     renderHome();
   </script>

@@ -312,7 +312,7 @@
       com: { title: "اختبار الحاسوب", folder: "com_quizzes", img: "https://images.pexels.com/photos/392018/pexels-photo-392018.jpeg?cs=srgb&dl=pexels-vojtech-okenka-127162-392018.jpg&fm=jpg" }
     };
     const BASE_API = "https://api.github.com/repos/AboALhasanx/json-files/contents";
-    const ORDINALS = ["الأول", "الثاني", "الثالث", "الرابع", "الخامس", "السادس", "السابع", "الثامن", "التاسع", "العاشر"];
+    const ORDINALS = ["الأول", "الثاني", "الثالث", "الرابع", "الخامس", "السادس", "السابع", "الثامن", "التاسع", "العاشر", "الحادي عشر", "الثاني عشر", "الثالث عشر", "الرابع عشر", "الخامس عشر", "السادس عشر", "السابع عشر", "الثامن عشر", "التاسع عشر", "العشرون", "الحادي والعشرون", "الثاني والعشرون", "الثالث والعشرون", "الرابع والعشرون", "الخامس والعشرون", "السادس والعشرون", "السابع والعشرون", "الثامن والعشرون", "التاسع والعشرون", "الثلاثون", "الحادي والثلاثون", "الثاني والثلاثون", "الثالث والثلاثون", "الرابع والثلاثون", "الخامس والثلاثون", "السادس والثلاثون", "السابع والثلاثون", "الثامن والثلاثون", "التاسع والثلاثون", "الأربعون", "الحادي والأربعون", "الثاني والأربعون", "الثالث والأربعون", "الرابع والأربعون", "الخامس والأربعون", "السادس والأربعون", "السابع والأربعون", "الثامن والأربعون", "التاسع والأربعون", "الخمسون"];
 
     let state = { page: 'home', course: '', parts: [], quizData: [] };
     const app = document.getElementById('app'), barTitle = document.getElementById('barTitle'), backBtn = document.getElementById('backBtn');
@@ -338,7 +338,7 @@
       backBtn.style.display = 'none';
       barTitle.textContent = 'الاختبارات الوطني MCQ';
       app.innerHTML = '<section class="hero">' +
-        Object.entries(COURSES).map(([k,v]) =>
+        Object.entries(COURSES).map(([k, v]) =>
           `<div class="course-card" onclick="renderParts('${k}')">` +
           `<div class="card-thumb" style="background-image:url('${v.img}')"></div>` +
           `<div class="card-body"><h3>${v.title}</h3></div></div>`
@@ -354,7 +354,7 @@
       fetch(`${BASE_API}/${COURSES[courseKey].folder}?ref=main`)
         .then(r => r.json())
         .then(files => {
-          state.parts = files.filter(f => f.name.endsWith('.json')).map((f,i) => ({ src: f.download_url, label: `الجزء ${ORDINALS[i]}` }));
+          state.parts = files.filter(f => f.name.endsWith('.json')).map((f, i) => ({ src: f.download_url, label: `الجزء ${ORDINALS[i]}` }));
           const partsEl = document.getElementById('parts');
           state.parts.forEach(p =>
             partsEl.insertAdjacentHTML('beforeend', `<div class="part-card" onclick="loadQuiz('${p.src}')"><h4>${p.label}</h4></div>`)
@@ -379,106 +379,80 @@
     function renderQuiz() {
       const qc = document.getElementById('quizContainer');
       qc.innerHTML = '';
-      state.quizData.forEach((q,i) =>
+      state.quizData.forEach((q, i) =>
         qc.insertAdjacentHTML('beforeend',
-          `<div class="card"><h4>${i+1}. ${q.question}</h4>` +
-          q.options.map((opt,idx) =>
+          `<div class="card"><h4>${i + 1}. ${q.question}</h4>` +
+          q.options.map((opt, idx) =>
             `<label class="option" id="lbl-${i}-${idx}"><input type="radio" name="q${i}" value="${idx}"> ${opt}</label>`
           ).join('') + `</div>`
         )
       );
       qc.insertAdjacentHTML('beforeend', '<button id="submitBtn" class="btn btn-main" disabled>إظهار النتيجة</button>');
-      document.querySelectorAll('input[type=radio]').forEach(i=>i.onchange=()=>{
-        document.getElementById('submitBtn').disabled = !state.quizData.every((_,j) => document.querySelector(`input[name=q${j}]:checked`));
+      document.querySelectorAll('input[type=radio]').forEach(i => i.onchange = () => {
+        document.getElementById('submitBtn').disabled = !state.quizData.every((_, j) => document.querySelector(`input[name=q${j}]:checked`));
       });
       document.getElementById('submitBtn').onclick = showScore;
     }
 
-  function showScore() {
-      const qc = document.getElementById('quizContainer');
+// دالة عرض النتيجة وتهيئة زرّ "عرض التصحيح"
+function showScore() {
+  const qc = document.getElementById('quizContainer');
 
-      // 1) حساب الدرجة
-      const answers = state.quizData.map((_, i) =>
-        Number(document.querySelector(`input[name=q${i}]:checked`).value)
-      );
-      const score = answers.reduce((s, a, i) => a === state.quizData[i].correct_option_id ? s + 1 : s, 0);
-      const pass = score >= Math.ceil(state.quizData.length / 2);
+  // 1) حساب الإجابات والدرجة
+  const answers = state.quizData.map((_, i) =>
+    Number(document.querySelector(`input[name=q${i}]:checked`).value)
+  );
+  const score = answers.reduce((sum, a, i) =>
+    a === state.quizData[i].correct_option_id ? sum + 1 : sum
+  , 0);
+  const pass = score >= Math.ceil(state.quizData.length / 2);
 
-      // 2) إدراج الـ result-box وزرّ "عرض التصحيح"
-      qc.insertAdjacentHTML('afterbegin',
-        `<div class="result-box ${pass ? 'pass' : 'fail'}">
+  // 2) إدراج صندوق النتيجة وزرّ "عرض التصحيح"
+  qc.insertAdjacentHTML('afterbegin',
+    `<div class="result-box ${pass ? 'pass' : 'fail'}">
        ${pass ? 'مبروك' : 'حظًّا أوفر'}! درجتك ${score} من ${state.quizData.length}
      </div>
-     <button id="reviewBtn" class="btn btn-sec">عرض التصحيح</button>`
-      );
-
-      // 3) حذف زرّ "إظهار النتيجة"
-      document.getElementById('submitBtn')?.remove();
-
-      // 4) إدراج زرّ "إعادة تحميل الأسئلة"
-      qc.insertAdjacentHTML('beforeend',
-        `<button id="refreshBtn" class="btn">إعادة تحميل الأسئلة</button>`
-      );
-
-      // 5) قم بالتمرير للأعلى حتى يظهر result-box
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      tById('quizContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-      // 6) ربط الأزرار
-      document.getElementById('reviewBtn').onclick = () => {
-        state.quizData.forEach((q, i) => {
-          const c = q.correct_option_id;
-          document.getElementById(`lbl-${i}-${c}`).classList.add('correct');
-          const u = Number(document.querySelector(`input[name=q${i}]:checked`).value);
-          if (u !== c) document.getElementById(`lbl-${i}-${u}`).classList.add('wrong');
-        });
-        document.getElementById('reviewBtn').remove();
-      };
-
-      document.getElementById('refreshBtn').onclick = () => renderQuiz();
-    }
-
-      const qc = document.getElementById('quizContainer');
-  // حساب الدرجة…
-  const answers = state.quizData.map((_,i)=>Number(
-    document.querySelector(`input[name=q${i}]:checked`).value
-  ));
-  const score = answers.reduce((s,a,i)=>a===state.quizData[i].correct_option_id?s+1:s,0);
-  const pass = score >= Math.ceil(state.quizData.length/2);
-
-  // 1) ندرج نتيجة الاختبار وزر "عرض التصحيح"
-  qc.insertAdjacentHTML('afterbegin',
-    `<div class="result-box ${pass?'pass':'fail'}">
-       ${pass?'مبروك':'حظًّا أوفر'}! درجتك ${score} من ${state.quizData.length}
-     </div>
-     <button id="reviewBtn" class="btn btn-sec">عرض التصحيح</button>`
+     <button id="reviewBtn" class="btn btn-sec">🔍 عرض التصحيح</button>`
   );
 
-  // 2) نحذف زرّ "إظهار النتيجة"
+  // 3) إزالة زرّ "إظهار النتيجة"
   const submitBtn = document.getElementById('submitBtn');
   if (submitBtn) submitBtn.remove();
 
-  // 3) نُدرج زرّ "إعادة تحميل الأسئلة"
-  qc.insertAdjacentHTML('beforeend',
-    `<button id="refreshBtn" class="btn">إعادة تحميل الأسئلة</button>`
-  );
+  // 4) صعود إلى صندوق النتيجة ليُرى مباشرة
+  document.querySelector('.result-box')
+          .scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // 4) رابط الفعاليات
-  document.getElementById('reviewBtn').onclick = () => {
-    state.quizData.forEach((q,i) => {
-      const c = q.correct_option_id;
-      document.getElementById(`lbl-${i}-${c}`).classList.add('correct');
-      const u = Number(document.querySelector(`input[name=q${i}]:checked`).value);
-      if (u !== c) document.getElementById(`lbl-${i}-${u}`).classList.add('wrong');
-    });
-    // بعد العرض النهائي نقدر نُزيل زرّ التصحيح لو أحببت:
-    document.getElementById('reviewBtn').remove();
-  };
+  // 5) ربط حدث الضغط على زرّ "عرض التصحيح"
+  document.getElementById('reviewBtn')
+          .addEventListener('click', showReview);
+}
 
-  document.getElementById('refreshBtn').onclick = () => {
-  renderQuiz();
-};
+// دالة تلوين التصحيح وصعود للصندوق
+function showReview() {
+  // 1) تلوين الإجابات الصحيحة والخاطئة
+  state.quizData.forEach((q, i) => {
+    const correctId = q.correct_option_id;
+    // تمييز الصحيح
+    document.getElementById(`lbl-${i}-${correctId}`)
+            .classList.add('correct');
+    // تمييز الخطأ إذا اختاره المستخدم
+    const userChoice = Number(
+      document.querySelector(`input[name=q${i}]:checked`).value
+    );
+    if (userChoice !== correctId) {
+      document.getElementById(`lbl-${i}-${userChoice}`)
+              .classList.add('wrong');
+    }
+  });
 
+  // 2) صعود إلى صندوق النتيجة بعد التلوين
+  document.querySelector('.result-box')
+          .scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // 3) إزالة زرّ "عرض التصحيح" بعد الاستخدام
+  const revBtn = document.getElementById('reviewBtn');
+  if (revBtn) revBtn.remove();
 }
 
     renderHome();
