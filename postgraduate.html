@@ -217,13 +217,14 @@
       transition: .15s;
     }
 
-    .option input {
+    .option input[type="radio"] {
+      accent-color: rgb(63, 63, 255);
+      transform: scale(1.5);
       margin-right: .6rem;
-      cursor: pointer;
     }
 
     .option.selected {
-      border-color: var(--option-sel);
+      border-color: rgb(63, 63, 255);
     }
 
     .option.correct {
@@ -306,7 +307,7 @@
   <div id="app"></div>
 
   <script>
-        const COURSES = {
+    const COURSES = {
       ai: {
         title: "اختبارات الذكاء الاصطناعي",
         folder: "ai_quizzes",
@@ -330,7 +331,7 @@
       ds_algo: {
         title: "اختبار هياكل البيانات والخوارزميات",
         folder: "ds_algo_quizzes",
-        img: "https://www-cdn.eumetsat.int/files/styles/16_9_large/s3/2020-07/algorithms.jpg?h=c74750f6&itok=oPjIVP8W"
+        img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgZcBMzuyrJ-lpBL9iaoeq0U_A4vA8veo7X1sN4Mg-2smLr-j_BMA79fyd8y98CysGvsCePIp2Z94pslAlWXtW8qcyvTOpsqRkIXSfGNhOOTEph85_pNzCz96a2BAs0TahG-xm672RH2btHK7P87uv0phjFP1ndm5saJTXC8gU1Z0h--p_NX5MsBSYl/s16000-rw/%D8%A7%D9%84%D8%AE%D9%88%D8%A7%D8%B1%D8%B2%D9%85%D9%8A%D8%A7%D8%AA%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A8%D8%B1%D9%85%D8%AC%D8%A9.webp"
       },
       os: {
         title: "اختبار نظم التشغيل",
@@ -364,7 +365,7 @@
     function renderHome() {
       state.page = 'home';
       backBtn.style.display = 'none';
-      barTitle.textContent = 'الاختبارات الوطني MCQ';
+      barTitle.textContent = 'اختبارات التنافسي MCQ';
       app.innerHTML = '<section class="hero">' +
         Object.entries(COURSES).map(([k, v]) =>
           `<div class="course-card" onclick="renderParts('${k}')">` +
@@ -422,69 +423,140 @@
       document.getElementById('submitBtn').onclick = showScore;
     }
 
-// دالة عرض النتيجة وتهيئة زرّ "عرض التصحيح"
-function showScore() {
-  const qc = document.getElementById('quizContainer');
+    // دالة عرض النتيجة وتهيئة زرّ "عرض التصحيح"
+    function showScore() {
+      const qc = document.getElementById('quizContainer');
 
-  // 1) حساب الإجابات والدرجة
-  const answers = state.quizData.map((_, i) =>
-    Number(document.querySelector(`input[name=q${i}]:checked`).value)
-  );
-  const score = answers.reduce((sum, a, i) =>
-    a === state.quizData[i].correct_option_id ? sum + 1 : sum
-  , 0);
-  const pass = score >= Math.ceil(state.quizData.length / 2);
+      // 1) حساب الإجابات والدرجة
+      const answers = state.quizData.map((_, i) =>
+        Number(document.querySelector(`input[name=q${i}]:checked`).value)
+      );
+      const score = answers.reduce((sum, a, i) =>
+        a === state.quizData[i].correct_option_id ? sum + 1 : sum
+        , 0);
+      const pass = score >= Math.ceil(state.quizData.length / 2);
 
-  // 2) إدراج صندوق النتيجة وزرّ "عرض التصحيح"
-  qc.insertAdjacentHTML('afterbegin',
-    `<div class="result-box ${pass ? 'pass' : 'fail'}">
+      // 2) إدراج صندوق النتيجة وزرّ "عرض التصحيح"
+      qc.insertAdjacentHTML('afterbegin',
+        `<div class="result-box ${pass ? 'pass' : 'fail'}">
        ${pass ? 'مبروك' : 'حظًّا أوفر'}! درجتك ${score} من ${state.quizData.length}
      </div>
      <button id="reviewBtn" class="btn btn-sec">🔍 عرض التصحيح</button>`
-  );
+      );
 
-  // 3) إزالة زرّ "إظهار النتيجة"
-  const submitBtn = document.getElementById('submitBtn');
-  if (submitBtn) submitBtn.remove();
+      // 3) إزالة زرّ "إظهار النتيجة"
+      const submitBtn = document.getElementById('submitBtn');
+      if (submitBtn) submitBtn.remove();
 
-  // 4) صعود إلى صندوق النتيجة ليُرى مباشرة
-  document.querySelector('.result-box')
-          .scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // 4) صعود إلى صندوق النتيجة ليُرى مباشرة
+      document.querySelector('.result-box')
+        .scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // 5) ربط حدث الضغط على زرّ "عرض التصحيح"
-  document.getElementById('reviewBtn')
-          .addEventListener('click', showReview);
-}
-
-// دالة تلوين التصحيح وصعود للصندوق
-function showReview() {
-  // 1) تلوين الإجابات الصحيحة والخاطئة
-  state.quizData.forEach((q, i) => {
-    const correctId = q.correct_option_id;
-    // تمييز الصحيح
-    document.getElementById(`lbl-${i}-${correctId}`)
-            .classList.add('correct');
-    // تمييز الخطأ إذا اختاره المستخدم
-    const userChoice = Number(
-      document.querySelector(`input[name=q${i}]:checked`).value
-    );
-    if (userChoice !== correctId) {
-      document.getElementById(`lbl-${i}-${userChoice}`)
-              .classList.add('wrong');
+      // 5) ربط حدث الضغط على زرّ "عرض التصحيح"
+      document.getElementById('reviewBtn')
+        .addEventListener('click', showReview);
     }
-  });
 
-  // 2) صعود إلى صندوق النتيجة بعد التلوين
-  document.querySelector('.result-box')
-          .scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // دالة تلوين التصحيح وصعود للصندوق
+    function showReview() {
+      // 1) تلوين الإجابات الصحيحة والخاطئة
+      state.quizData.forEach((q, i) => {
+        const correctId = q.correct_option_id;
+        // تمييز الصحيح
+        document.getElementById(`lbl-${i}-${correctId}`)
+          .classList.add('correct');
+        // تمييز الخطأ إذا اختاره المستخدم
+        const userChoice = Number(
+          document.querySelector(`input[name=q${i}]:checked`).value
+        );
+        if (userChoice !== correctId) {
+          document.getElementById(`lbl-${i}-${userChoice}`)
+            .classList.add('wrong');
+        }
+      });
 
-  // 3) إزالة زرّ "عرض التصحيح" بعد الاستخدام
-  const revBtn = document.getElementById('reviewBtn');
-  if (revBtn) revBtn.remove();
-}
+      // 2) صعود إلى صندوق النتيجة بعد التلوين
+      document.querySelector('.result-box')
+        .scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // 3) إزالة زرّ "عرض التصحيح" بعد الاستخدام
+      const revBtn = document.getElementById('reviewBtn');
+      if (revBtn) revBtn.remove();
+    }
 
     renderHome();
   </script>
+
+  <!-- في الـ<head> -->
+  <style>
+    .button-19 {
+      position: relative;
+      /* ← لازم عشان يظهر الظل السفلي */
+      appearance: button;
+      background-color: #1899D6;
+      border: solid transparent;
+      border-radius: 16px;
+      border-width: 0 0 4px;
+      box-sizing: border-box;
+      color: #FFFFFF;
+      cursor: pointer;
+      display: inline-block;
+      font-family: din-round, sans-serif;
+      font-size: px;
+      font-weight: 700;
+      letter-spacing: .8px;
+      line-height: 20px;
+      margin: 0;
+      outline: none;
+      overflow: visible;
+      padding: 13px 16px;
+      text-align: center;
+      text-transform: uppercase;
+      touch-action: manipulation;
+      transform: translateZ(0);
+      transition: filter .2s;
+      user-select: none;
+      -webkit-user-select: none;
+      vertical-align: middle;
+      white-space: nowrap;
+      width: 40%;
+    }
+
+    .button-19:after {
+      content: "";
+      position: absolute;
+      /* ← تأكد إنه absolute بالنسبة للأصل */
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: -4px;
+      background-clip: padding-box;
+      background-color: #1CB0F6;
+      border: solid transparent;
+      border-radius: 16px;
+      border-width: 0 0 4px;
+      z-index: -1;
+    }
+
+    .button-19:hover:not(:disabled) {
+      filter: brightness(1.1);
+      -webkit-filter: brightness(1.1);
+    }
+
+    .button-19:active {
+      border-width: 4px 0 0;
+      background: none;
+    }
+  </style>
+
+
+  <!-- <div style="text-align:center; margin:20px 0; position: relative;">
+    <button class="button-19" role="button" onclick="window.location.href='final_test.html'">
+      الاختبار التنافسي (اختبار شامل المواد كاملة)
+    </button>
+  </div> -->
+
+
 
   <footer>
     <div class="footer-container">

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>الاختبارات الوطني MCQ</title>
+  <title>الاختبارات الدراسات الاولية MCQ</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
@@ -188,6 +188,8 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
     .card {
@@ -217,13 +219,14 @@
       transition: .15s;
     }
 
-    .option input {
+    .option input[type="radio"] {
+      accent-color: rgb(63, 63, 255);
+      transform: scale(1.5);
       margin-right: .6rem;
-      cursor: pointer;
     }
 
     .option.selected {
-      border-color: var(--option-sel);
+      border-color: rgb(63, 63, 255);
     }
 
     .option.correct {
@@ -299,7 +302,7 @@
 <body>
   <div class="topbar">
     <button id="backBtn" class="back-btn" style="display:none" onclick="goBack()">رجوع</button>
-    <h1 id="barTitle" style="margin: auto;">الاختبارات الوطني MCQ</h1>
+    <h1 id="barTitle" style="margin: auto;">اختبارات الدراسات الاولية MCQ</h1>
     <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">🌙</button>
   </div>
 
@@ -335,7 +338,7 @@
     function renderHome() {
       state.page = 'home';
       backBtn.style.display = 'none';
-      barTitle.textContent = 'الاختبارات الوطني MCQ';
+      barTitle.textContent = ' اختبارات الدراسات الاولية MCQ';
       app.innerHTML = '<section class="hero">' +
         Object.entries(COURSES).map(([k, v]) =>
           `<div class="course-card" onclick="renderParts('${k}')">` +
