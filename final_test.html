@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="utf-8">
+  <title>محاكاة الاختبار التنافسي</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root[data-theme="light"] {
+      --bg: #f4f4f4;
+      --text: #212121;
+      --card-bg: #ffffff;
+      --card-border: #d7d7d7;
+      --option-sel: #000;
+      --correct-bg: #d1e7dd;
+      --correct-bd: #198754;
+      --wrong-bg: #f8d7da;
+      --wrong-bd: #dc3545;
+      --topbar-bg: #3c3c3c;
+      --primary: #3850ff;
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #141414;
+      --text: #eeeeee;
+      --card-bg: #1f1f1f;
+      --card-border: #404040;
+      --option-sel: #fff;
+      --correct-bg: #113d2d;
+      --correct-bd: #2aa15f;
+      --wrong-bg: #5b2028;
+      --wrong-bd: #dc3545;
+      --topbar-bg: #2a2a2a;
+      --primary: #f1c40f;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .topbar {
+      background: var(--topbar-bg);
+      color: #fff;
+      padding: .9rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .topbar button {
+      background: #ffffff26;
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: .15s;
+    }
+
+    .topbar button:hover {
+      background: #ffffff3d;
+    }
+
+    .topbar h1 {
+      margin: 0 auto 0 0;
+      font-size: 1.2rem;
+    }
+
+    #timer {
+      text-align: center;
+      font-size: 1.1rem;
+      margin: 1rem 0;
+    }
+
+    .container {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      direction: ltr;
+      text-align: left;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.3rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
+    }
+
+    .card h4 {
+      margin-bottom: .8rem;
+      font-size: 1rem;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      border: 2px solid var(--card-border);
+      border-radius: 10px;
+      padding: .55rem .85rem;
+      margin: .5rem 0;
+      cursor: pointer;
+      transition: .15s;
+    }
+
+    .option input[type="radio"] {
+      accent-color: rgb(63, 63, 255);
+      transform: scale(1.5);
+      margin-right: .6rem;
+    }
+
+    .option.selected {
+      border-color: rgb(63, 63, 255);
+    }
+
+    .option.correct {
+      border-color: var(--correct-bd);
+      background: var(--correct-bg);
+    }
+
+    .option.wrong {
+      border-color: var(--wrong-bd);
+      background: var(--wrong-bg);
+    }
+
+    .btn {
+      display: block;
+      width: 90%;
+      max-width: 520px;
+      margin: 12px auto;
+      padding: .9rem;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: .15s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, .226);
+    }
+
+    .result-box {
+      max-width: 520px;
+      margin: 0 auto 1.5rem;
+      padding: 1.2rem;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
+    }
+
+    .result-box.pass {
+      background: var(--correct-bg);
+      color: var(--correct-bd);
+    }
+
+    .result-box.fail {
+      background: var(--wrong-bg);
+      color: var(--wrong-bd);
+    }
+
+    footer {
+      background: var(--card-bg);
+      border-top: 1px solid var(--card-border);
+      padding: 1rem 0;
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color .2s;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <button onclick="window.location.href='./postgraduate.html'">←</button>
+    <h1>محاكاة الاختبار التنافسي</h1>
+    <button id="themeToggle">🌙</button>
+  </div>
+
+  <div id="timer"></div>
+  <div class="container" id="quizContainer"></div>
+
+  <script>
+    let state = { quizData: [], startTime: 0 };
+
+    // Theme toggle
+    function applyTheme(th) {
+      document.documentElement.setAttribute('data-theme', th);
+      document.getElementById('themeToggle').textContent = th === 'dark' ? '🌞' : '🌙';
+    }
+    applyTheme(localStorage.theme ||
+      (window.Telegram?.WebApp.themeParams.bg_color === '#000000' ? 'dark' : 'light'));
+    document.getElementById('themeToggle').onclick = () => {
+      let t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      localStorage.theme = t;
+      applyTheme(t);
+    };
+
+    // Fisher–Yates shuffle for arrays
+    function shuffleArray(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    // Shuffle options & maintain correct index
+    function shuffleQuestion(q) {
+      const correctText = q.options[q.correct_option_id];
+      const arr = shuffleArray(q.options.map((o, i) => ({ o, i })));
+      return {
+        question: q.question,
+        options: arr.map(x => x.o),
+        correct_option_id: arr.findIndex(x => x.o === correctText)
+      };
+    }
+
+    // Timer in hh:mm:ss
+    function startTimer(sec) {
+      const timerEl = document.getElementById('timer');
+      let t = sec;
+      const iv = setInterval(() => {
+        if (t < 0) {
+          clearInterval(iv);
+          alert("انتهى الوقت!");
+          showScore();
+          return;
+        }
+        const h = Math.floor(t / 3600);
+        const m = Math.floor((t % 3600) / 60);
+        const s = t % 60;
+        timerEl.textContent = `⏳ الوقت المتبقي: ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        t--;
+      }, 1000);
+    }
+
+    // Render quiz UI
+    function renderQuiz() {
+      const qc = document.getElementById('quizContainer');
+      qc.innerHTML = '';
+      state.quizData.forEach((q, i) => {
+        const num = i + 1;
+        const opts = q.options.map((opt, idx) => {
+          const letter = String.fromCharCode(65 + idx);
+          return `
+            <label class="option" id="lbl-${i}-${idx}">
+              <input type="radio" name="q${i}" value="${idx}">
+              <strong>${letter}.</strong> ${opt}
+            </label>`;
+        }).join('');
+        qc.insertAdjacentHTML('beforeend',
+          `<div class="card"><h4>${num}. ${q.question}</h4>${opts}</div>`);
+      });
+      qc.insertAdjacentHTML('beforeend',
+        '<button id="submitBtn" class="btn" disabled>إظهار النتيجة</button> <center>يجب الاجابة على جميع الأسئلة</center>');
+      document.querySelectorAll('input[type=radio]').forEach(inp =>
+        inp.onchange = () => {
+          document.getElementById('submitBtn').disabled =
+            !state.quizData.every((_, j) =>
+              document.querySelector(`input[name=q${j}]:checked`)
+            );
+        }
+      );
+      document.getElementById('submitBtn').onclick = showScore;
+    }
+
+    // Show score + elapsed time
+    function showScore() {
+      
+      const qc = document.getElementById('quizContainer');
+      // compute score
+      const answers = state.quizData.map((_, i) =>
+        +document.querySelector(`input[name=q${i}]:checked`).value
+      );
+      const score = answers.reduce((sum, a, i) =>
+        a === state.quizData[i].correct_option_id ? sum + 1 : sum, 0
+      );
+      const pass = score >= Math.ceil(state.quizData.length / 2);
+
+      // elapsed time
+      const elapsedSec = Math.floor((Date.now() - state.startTime) / 1000);
+      const h = Math.floor(elapsedSec / 3600),
+            m = Math.floor((elapsedSec % 3600) / 60),
+            s = elapsedSec % 60;
+      const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
+      // render results
+      qc.insertAdjacentHTML('afterbegin',
+        `<div class="result-box ${pass?'pass':'fail'}">
+           ${pass?'مبروك':'حظًّا أوفر'}! درجتك ${score} من ${state.quizData.length}
+         </div>
+         <p style="text-align:center;margin:8px 0;font-size:1rem;">
+           لقد أنهيت الامتحان في ${timeStr}
+         </p>
+         <button id="reviewBtn" class="btn">عرض التصحيح</button>`);
+      document.getElementById('submitBtn').remove();
+      document.getElementById('reviewBtn').onclick = showReview;
+      document.querySelector('.result-box').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Show correct/wrong
+    function showReview() {
+      state.quizData.forEach((q, i) => {
+        const correct = q.correct_option_id;
+        document.getElementById(`lbl-${i}-${correct}`).classList.add('correct');
+        const user = +document.querySelector(`input[name=q${i}]:checked`).value;
+        if (user !== correct) {
+          document.getElementById(`lbl-${i}-${user}`).classList.add('wrong');
+        }
+      });
+      document.getElementById('reviewBtn').remove();
+      document.querySelector('.result-box').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Load & start from GitHub, pick 100 random
+    fetch('https://raw.githubusercontent.com/AboALhasanx/json-files/main/final_test.json')
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then(all => {
+        // shuffle and take 100
+        const sample = shuffleArray(all).slice(0, 100);
+        state.quizData = sample.map(shuffleQuestion);
+        state.startTime = Date.now();
+        renderQuiz();
+        startTimer(150 * 60);
+      })
+      .catch(e => {
+        document.getElementById('quizContainer').innerHTML =
+          `<p style="color:red;text-align:center;">خطأ في تحميل الأسئلة: ${e.message}</p>`;
+      });
+  </script>
+
+  <footer>
+    <p>© كل الحقوق محفوظة</p>
+  </footer>
+</body>
+</html>
